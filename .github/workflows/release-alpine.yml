@@ -35,7 +35,9 @@ jobs:
               rustc -vV | grep -q "host: x86_64-unknown-linux-musl"
               # The Alpine Rust host is musl. Forcing +crt-static makes rustc
               # refuse to build proc-macro dylibs for that same target.
-              export ZSTD_SYS_USE_PKG_CONFIG=0
+              # Leave ZSTD_SYS_USE_PKG_CONFIG unset so zstd-sys compiles its
+              # bundled static library. Any value, including 0, switches it to
+              # pkg-config and fails when libzstd is not installed.
               cargo build --release --locked
               mkdir -p dist
               cp target/release/pingora-waf dist/pingora-waf
