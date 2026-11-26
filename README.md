@@ -125,20 +125,27 @@ cargo install --path .
 
 ### Alpine (musl)
 
-Publishing a GitHub Release, or pushing a `v*` tag such as `v0.1.0`, builds an `x86_64-unknown-linux-musl` binary on Alpine and uploads it to that Release:
+Install the musl binary and register an OpenRC service that starts on boot:
+
+```
+wget -qO- https://raw.githubusercontent.com/shidianxia/pingora-waf/main/scripts/install-alpine.sh | sh
+```
+
+The script downloads the latest `x86_64-unknown-linux-musl` release, installs `/usr/local/bin/pingora-waf`, copies rules to `/etc/pingora-waf/`, and runs `rc-update add pingora-waf default`.
+
+```
+rc-service pingora-waf status
+rc-service pingora-waf restart
+```
+
+Set the upstream before the first install with `PINGORA_WAF_UPSTREAM_HOST` and `PINGORA_WAF_UPSTREAM_PORT`. After installation, edit `/etc/conf.d/pingora-waf` and `/etc/pingora-waf/waf_rules.yaml`. The shipped rules blacklist `10.0.0.0/8`.
+
+Publishing a GitHub Release, or pushing a `v*` tag, builds the binary and uploads:
 
 - `pingora-waf-<tag>-x86_64-unknown-linux-musl.tar.gz`
 - `pingora-waf-<tag>-x86_64-unknown-linux-musl.tar.gz.sha256`
 
-The archive contains the `pingora-waf` binary and the `config/` directory. On Alpine:
-
-```
-tar -xzf pingora-waf-v0.1.0-x86_64-unknown-linux-musl.tar.gz
-cd pingora-waf-v0.1.0-x86_64-unknown-linux-musl
-RUST_LOG=info ./pingora-waf
-```
-
-Pushes to `main` build the same binary and keep it as an Actions artifact. They do not create a Release.
+Pushes to `main` keep the same binary as an Actions artifact and do not replace an existing Release.
 
 ### Docker
 

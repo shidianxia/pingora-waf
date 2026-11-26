@@ -1,0 +1,10 @@
+# OpenRC settings for pingora-waf.
+# Apply changes with: rc-service pingora-waf restart
+
+WAF_CONFIG="/etc/pingora-waf/waf_rules.yaml"
+WAF_UPSTREAM_HOST="127.0.0.1"
+WAF_UPSTREAM_PORT="8080"
+WAF_LISTEN_ADDR="0.0.0.0"
+WAF_LISTEN_PORT="6188"
+WAF_METRICS_PORT="6190"
+RUST_LOG="info"

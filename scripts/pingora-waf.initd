@@ -1,0 +1,39 @@
+#!/sbin/openrc-run
+
+name="pingora-waf"
+description="Pingora web application firewall"
+
+: "${WAF_CONFIG:=/etc/pingora-waf/waf_rules.yaml}"
+: "${WAF_UPSTREAM_HOST:=127.0.0.1}"
+: "${WAF_UPSTREAM_PORT:=8080}"
+: "${WAF_LISTEN_ADDR:=0.0.0.0}"
+: "${WAF_LISTEN_PORT:=6188}"
+: "${WAF_METRICS_PORT:=6190}"
+: "${RUST_LOG:=info}"
+
+command="/usr/local/bin/pingora-waf"
+command_args="-c ${WAF_CONFIG} -u ${WAF_UPSTREAM_HOST} -p ${WAF_UPSTREAM_PORT} -l ${WAF_LISTEN_ADDR} -P ${WAF_LISTEN_PORT} -m ${WAF_METRICS_PORT}"
+command_user="pingora-waf:pingora-waf"
+directory="/var/lib/pingora-waf"
+supervisor="supervise-daemon"
+respawn_delay=5
+respawn_max=0
+pidfile="/run/${RC_SVCNAME}.pid"
+output_log="/var/log/pingora-waf/pingora-waf.log"
+error_log="/var/log/pingora-waf/pingora-waf.err"
+
+export RUST_LOG
+
+depend() {
+    need net
+    after firewall
+}
+
+start_pre() {
+    checkpath -d -o pingora-waf:pingora-waf -m 0755 /var/log/pingora-waf
+    checkpath -d -o pingora-waf:pingora-waf -m 0755 /var/lib/pingora-waf
+    if [ ! -f "$WAF_CONFIG" ]; then
+        eerror "Config file not found: $WAF_CONFIG"
+        return 1
+    fi
+}
