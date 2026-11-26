@@ -33,8 +33,9 @@ jobs:
               apk add --no-cache build-base cmake pkgconf linux-headers
               rustc -vV
               rustc -vV | grep -q "host: x86_64-unknown-linux-musl"
+              # The Alpine Rust host is musl. Forcing +crt-static makes rustc
+              # refuse to build proc-macro dylibs for that same target.
               export ZSTD_SYS_USE_PKG_CONFIG=0
-              export RUSTFLAGS="-C target-feature=+crt-static"
               cargo build --release --locked
               mkdir -p dist
               cp target/release/pingora-waf dist/pingora-waf
@@ -46,7 +47,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y file
           file dist/pingora-waf
-          file dist/pingora-waf | grep -Eq "statically linked|static-pie"
+          if file dist/pingora-waf | grep -Eq "statically linked|static-pie|ld-musl"; then
+            echo "musl executable"
+          else
+            echo "binary is not a musl executable" >&2
+            exit 1
+          fi
           docker run --rm \
             -v "${PWD}/dist/pingora-waf:/pingora-waf:ro" \
             alpine:3 \

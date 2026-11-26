@@ -125,7 +125,7 @@ cargo install --path .
 
 ### Alpine (musl)
 
-Publishing a GitHub Release, or pushing a `v*` tag such as `v0.1.0`, builds a statically linked `x86_64-unknown-linux-musl` binary and uploads it to that Release:
+Publishing a GitHub Release, or pushing a `v*` tag such as `v0.1.0`, builds an `x86_64-unknown-linux-musl` binary on Alpine and uploads it to that Release:
 
 - `pingora-waf-<tag>-x86_64-unknown-linux-musl.tar.gz`
 - `pingora-waf-<tag>-x86_64-unknown-linux-musl.tar.gz.sha256`
