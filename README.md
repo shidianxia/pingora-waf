@@ -123,6 +123,23 @@ sudo chmod +x /usr/local/bin/pingora-waf
 cargo install --path .
 ```
 
+### Alpine (musl)
+
+Publishing a GitHub Release, or pushing a `v*` tag such as `v0.1.0`, builds a statically linked `x86_64-unknown-linux-musl` binary and uploads it to that Release:
+
+- `pingora-waf-<tag>-x86_64-unknown-linux-musl.tar.gz`
+- `pingora-waf-<tag>-x86_64-unknown-linux-musl.tar.gz.sha256`
+
+The archive contains the `pingora-waf` binary and the `config/` directory. On Alpine:
+
+```
+tar -xzf pingora-waf-v0.1.0-x86_64-unknown-linux-musl.tar.gz
+cd pingora-waf-v0.1.0-x86_64-unknown-linux-musl
+RUST_LOG=info ./pingora-waf
+```
+
+Pushes to `main` build the same binary and keep it as an Actions artifact. They do not create a Release.
+
 ### Docker
 
 ```
